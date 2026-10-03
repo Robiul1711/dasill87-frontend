@@ -2,15 +2,18 @@
 
 @theme {
   /* Colors */
-  --color-primary-pink: #e33e78;
-  --color-secondary-gray: #212b36;
+  --color-primary: #323956;
+  --color-secondary: #637381;
+
 
   /* Font Family */
-  --font-dm-sans: var(--font-dm-sans);
+  --font-sans: var(--font-dm-sans), sans-serif;
+  --font-dm-sans: var(--font-dm-sans), sans-serif;
 }
 
 body {
-  @apply font-dm-sans bg-[#F9FAFB];
+  font-family: var(--font-dm-sans), sans-serif;
+  background-color: #F9FAFB;
 }
 
 .container {

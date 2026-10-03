@@ -23,7 +23,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${dmSans.variable} antialiased`}>
-      <body>
+      <body className="font-sans">
         <ReduxProvider>
           <ToastProvider />
           {children}
