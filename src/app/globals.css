@@ -19,3 +19,68 @@ body {
 .container {
   @apply max-w-415 mx-auto px-4 md:px-5 xl:px-12 2xl:px-5;
 }
+
+
+/* -------------------------------------------------- */
+/*      SECTION PADDING CLASSES FOR MOBILE-FIRST        */
+/* -------------------------------------------------- */
+
+.section-padding-x {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.section-padding-y {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+
+@media screen and (min-width: 650px) {
+  .section-padding-x {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  .section-padding-y {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .section-padding-x {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+  .section-padding-y {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@media screen and (min-width: 1460px) {
+  .section-padding-x {
+    padding-left: 7.5rem;
+    padding-right: 7.5rem;
+  }
+  .section-padding-y {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+
+
+/* Custom Ultra-Thin Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #080a0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #232d3b;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #323956;
+}

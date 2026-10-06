@@ -13,10 +13,15 @@ const dmSans = DM_Sans({
 
 // Metadata
 export const metadata = {
-  title: "Starter Next.js",
-  description: "A starter template for Next.js projects with Redux",
+  title: "Trabino - Your Personal AI Job-Hunter",
+  description: "Connect with jobs that truly fit your skills, goals, and aspirations.",
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 

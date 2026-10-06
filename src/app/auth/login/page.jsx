@@ -1,11 +1,13 @@
-import React from 'react';
+import React from "react";
+import SignInFlow from "@/components/auth/AuthFlow/SignInFlow";
 
-const page = () => {
-  return (
-    <div>
-      Login
-    </div>
-  );
+export const metadata = {
+  title: "Sign In | Trabino",
+  description: "Sign in to your Trabino account.",
 };
 
-export default page;
+const LoginPage = () => {
+  return <SignInFlow />;
+};
+
+export default LoginPage;
