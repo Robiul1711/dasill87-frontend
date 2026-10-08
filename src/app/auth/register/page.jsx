@@ -1,11 +1,13 @@
-import React from 'react';
+import React from "react";
+import JobSeekerRegisterFlow from "@/components/auth/JobSeekerFlow/JobSeekerRegisterFlow";
 
-const page = () => {
-  return (
-    <div>
-      Register
-    </div>
-  );
+export const metadata = {
+  title: "Job Seeker Registration | Trabino",
+  description: "Join Trabino and create your job seeker profile today.",
 };
 
-export default page;
+const RegisterPage = () => {
+  return <JobSeekerRegisterFlow />;
+};
+
+export default RegisterPage;
