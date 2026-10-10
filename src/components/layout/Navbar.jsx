@@ -119,6 +119,12 @@ const Navbar = () => {
               {companyDropdownOpen && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                   <Link
+                    href="/company/dashboard"
+                    className="block px-4 py-2.5 text-xs text-[#2C344E] hover:bg-slate-50 hover:text-[#4F46E5] transition-colors font-medium"
+                  >
+                    Company Portal
+                  </Link>
+                  <Link
                     href="/auth/company-register"
                     className="block px-4 py-2.5 text-xs text-[#2C344E] hover:bg-slate-50 hover:text-[#4F46E5] transition-colors font-medium"
                   >
@@ -250,6 +256,13 @@ const Navbar = () => {
                   </button>
                   {mobileCompanyOpen && (
                     <div className="pl-3 pt-1 pb-2 flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <Link
+                        href="/company/dashboard"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-sm font-semibold text-blue-600 dark:text-blue-400 py-1.5"
+                      >
+                        Company Portal
+                      </Link>
                       <Link
                         href="/auth/company-register"
                         onClick={() => setMobileMenuOpen(false)}

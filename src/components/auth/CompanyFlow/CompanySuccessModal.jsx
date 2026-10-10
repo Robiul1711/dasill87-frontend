@@ -17,7 +17,7 @@ const CompanySuccessModal = ({
     if (onGoToDashboard) {
       onGoToDashboard();
     } else {
-      router.push("/dashboard");
+      router.push("/company/dashboard");
     }
   };
 
@@ -25,7 +25,7 @@ const CompanySuccessModal = ({
     if (onPostJob) {
       onPostJob();
     } else {
-      router.push("/dashboard/post-job");
+      router.push("/company/post-job");
     }
   };
 
