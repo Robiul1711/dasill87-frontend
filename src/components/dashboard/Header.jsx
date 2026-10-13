@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/providers/ThemeProvider";
 import {
   FiSearch,
@@ -19,9 +20,24 @@ import {
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 
 export default function DashboardHeader({ onToggleSidebar }) {
+  const pathname = usePathname();
   const { theme, toggleTheme, setTheme, mounted } = useTheme();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  let headerTitle = "Welcome, Marco";
+  let headerSubtitle = "Complete your profile";
+
+  if (pathname?.includes("/dashboard/cv-document")) {
+    headerTitle = "CV Document";
+    headerSubtitle = "Preview, customize, and export your tailored CV";
+  } else if (pathname?.includes("/dashboard/cover-letter")) {
+    headerTitle = "Cover Letter";
+    headerSubtitle = "Review, personalize, and download your cover letter";
+  } else if (pathname?.includes("/dashboard/documents-ready")) {
+    headerTitle = "Documents Ready";
+    headerSubtitle = "Review and export your completed application documents";
+  }
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,13 +65,13 @@ export default function DashboardHeader({ onToggleSidebar }) {
           <HiOutlineMenuAlt2 className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
 
-        {/* Greeting Text (Hidden on mobile to keep header clean, visible on sm+) */}
+        {/* Greeting / Page Title Text (Hidden on mobile) */}
         <div className="hidden sm:flex flex-col justify-center">
           <h1 className="text-xs sm:text-base font-bold text-gray-900 dark:text-white leading-snug">
-            Welcome, Marco
+            {headerTitle}
           </h1>
           <p className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-400 font-normal leading-tight">
-            Complete your profile
+            {headerSubtitle}
           </p>
         </div>
       </div>
