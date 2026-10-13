@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   FiBookmark,
   FiArrowUpRight,
@@ -13,6 +14,9 @@ import {
   FiX,
   FiSliders,
   FiInfo,
+  FiExternalLink,
+  FiCalendar,
+  FiArrowRight,
 } from "react-icons/fi";
 import { IoTrashOutline } from "react-icons/io5";
 import {
@@ -28,6 +32,7 @@ import RejectFeedbackModal from "@/components/dashboard/modals/RejectFeedbackMod
 import CompatibilityScoreModal from "@/components/dashboard/modals/CompatibilityScoreModal";
 import DeleteJobModal from "@/components/dashboard/modals/DeleteJobModal";
 import CreateDocumentModal from "@/components/dashboard/modals/CreateDocumentModal";
+import ApplySuccessfulModal from "@/components/dashboard/modals/ApplySuccessfulModal";
 
 // Initial Jobs Dataset
 const initialJobs = [
@@ -45,7 +50,7 @@ const initialJobs = [
     industry: "Software Farm",
     deadline: "01/02/2026",
     postedAgo: "1 week ago",
-    status: "pending", // 'pending' (all matches), 'accepted', 'rejected'
+    status: "accepted", // 'pending' (all matches), 'accepted', 'rejected', 'applied'
     bookmarked: false,
     summary:
       "This job is searching for a motivated Intern in R&D Software Development (100%, all genders) for a 6-month contract at METTLER TOLEDO. The role involves contributing to the development of an internal C/C++ desktop tool for digital signal processing, including planning, implementing a client tool, creating a robust API, developing a modular software architecture, defining software tests, and managing complex R&D requirements. Candidates should be currently enrolled in a relevant bachelor's or master's program.",
@@ -101,7 +106,7 @@ const initialJobs = [
     industry: "Software Farm",
     deadline: "15/02/2026",
     postedAgo: "1 week ago",
-    status: "pending",
+    status: "accepted",
     bookmarked: false,
     summary:
       "Join our fast-paced core engineering team designing high-throughput cloud distributed microservices. You will work closely with product management and platform architecture leads to deliver resilient client-facing features.",
@@ -146,7 +151,7 @@ const initialJobs = [
     industry: "Automotive Tech",
     deadline: "28/02/2026",
     postedAgo: "1 week ago",
-    status: "pending",
+    status: "accepted",
     bookmarked: true,
     summary:
       "Help build embedded digital instrument toolings and connected vehicle telemetry dashboard suites. Looking for energetic software apprentices with enthusiasm for modern technologies.",
@@ -224,7 +229,9 @@ const initialJobs = [
   },
 ];
 
-export default function MatchesPage() {
+function MatchesContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [jobs, setJobs] = useState(initialJobs);
   const [activeTab, setActiveTab] = useState("all"); // 'all', 'accepted', 'rejected'
   const [selectedJobId, setSelectedJobId] = useState("job-1");
@@ -240,6 +247,7 @@ export default function MatchesPage() {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCreateDocModalOpen, setIsCreateDocModalOpen] = useState(false);
+  const [isApplySuccessModalOpen, setIsApplySuccessModalOpen] = useState(false);
   const [activeTargetJobId, setActiveTargetJobId] = useState(null);
 
   // Current selected job
@@ -272,6 +280,21 @@ export default function MatchesPage() {
   const handleOpenDelete = (jobId) => {
     setActiveTargetJobId(jobId || selectedJobId);
     setIsDeleteModalOpen(true);
+  };
+
+  const handleOpenApply = (jobId) => {
+    setActiveTargetJobId(jobId || selectedJobId);
+    setIsApplySuccessModalOpen(true);
+  };
+
+  const handleConfirmApplySuccess = () => {
+    const targetId = activeTargetJobId || selectedJobId;
+    setJobs((prev) =>
+      prev.map((j) => (j.id === targetId ? { ...j, status: "applied" } : j))
+    );
+    setIsApplySuccessModalOpen(false);
+    toast.success("Application successfully submitted!");
+    router.push("/dashboard");
   };
 
   const handleConfirmAccept = () => {
@@ -381,7 +404,7 @@ export default function MatchesPage() {
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ================= LEFT COLUMN: Tabs + Matching List ================= */}
-        <div className="lg:col-span-4 space-y-4">
+        <div className="lg:col-span-4 space-y-4 lg:sticky lg:top-4 self-start">
           <div className="rounded-3xl bg-white p-4 sm:p-5 dark:bg-[#151B2B] border border-gray-100 dark:border-gray-800 shadow-sm">
             {/* Top Navigation Tabs */}
             <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#F4F5F7] dark:bg-[#111625] mb-4 text-xs font-semibold">
@@ -564,12 +587,11 @@ export default function MatchesPage() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedJobId(job.id);
-                              setIsCreateDocModalOpen(true);
+                              handleOpenApply(job.id);
                             }}
                             className="w-full py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 text-xs font-semibold transition-colors cursor-pointer text-center"
                           >
-                            Create Documents
+                            Apply for the job
                           </button>
                         </div>
                       )}
@@ -960,6 +982,24 @@ export default function MatchesPage() {
                 </div>
               </div>
 
+              {/* Notes & Comments */}
+              <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                <h4 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                  Notes &amp; Comments
+                </h4>
+                <div className="relative">
+                  <textarea
+                    rows={4}
+                    placeholder="Add notes & Comments"
+                    defaultValue=""
+                    className="w-full p-3.5 rounded-2xl bg-white dark:bg-[#111625] border border-gray-200 dark:border-gray-800 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-brand-blue resize-none shadow-2xs"
+                  />
+                  <span className="absolute bottom-2.5 right-3.5 text-[10px] text-gray-400 select-none">
+                    600/1000
+                  </span>
+                </div>
+              </div>
+
               {/* TrabinoScore Match Summary Section */}
               <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                 <div>
@@ -1066,6 +1106,97 @@ export default function MatchesPage() {
                 </div>
               </div>
 
+              {/* Attached Ready Application Documents Section */}
+              <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                {/* 1. CV Document Card */}
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-[#111625] border border-gray-100 dark:border-gray-800 shadow-2xs hover:border-gray-200 dark:hover:border-gray-700 transition-all">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-12 h-16 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shrink-0 bg-white shadow-2xs">
+                      <Image
+                        src="/templates/template_watercolor.jpg"
+                        alt="CV Thumbnail"
+                        fill
+                        className="object-cover object-top"
+                        sizes="48px"
+                      />
+                    </div>
+                    <div>
+                      <h5 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                        Mohima-Haque-OneDoc-CV
+                      </h5>
+                      <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mt-0.5">
+                        <FiCalendar className="w-3 h-3" />
+                        <span>Created on 01.01.26</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base select-none" title="United States">🇺🇸</span>
+                    <Link
+                      href="/dashboard/cv-document"
+                      aria-label="Edit CV"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-brand-blue dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <FiExternalLink className="w-4 h-4" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => toast.success("Document detached from application")}
+                      aria-label="Delete CV"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                    >
+                      <IoTrashOutline className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Cover Letter Document Card */}
+                <div className="flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-[#111625] border border-gray-100 dark:border-gray-800 shadow-2xs hover:border-gray-200 dark:hover:border-gray-700 transition-all">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-12 h-16 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shrink-0 bg-white shadow-2xs p-1.5 flex flex-col justify-between">
+                      <div className="space-y-1">
+                        <div className="h-1 w-6 bg-[#0052FF] rounded-full" />
+                        <div className="h-0.5 w-8 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                        <div className="h-0.5 w-7 bg-gray-200 dark:bg-gray-700 rounded-full" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="h-0.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full" />
+                        <div className="h-0.5 w-5 bg-gray-300 dark:bg-gray-600 rounded-full" />
+                      </div>
+                    </div>
+                    <div>
+                      <h5 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white">
+                        Mohima-Haque-OneDoc-CV
+                      </h5>
+                      <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mt-0.5">
+                        <FiCalendar className="w-3 h-3" />
+                        <span>Created on 01.01.26</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base select-none" title="United States">🇺🇸</span>
+                    <Link
+                      href="/dashboard/cover-letter"
+                      aria-label="Edit Cover Letter"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-brand-blue dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <FiExternalLink className="w-4 h-4" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => toast.success("Document detached from application")}
+                      aria-label="Delete Cover Letter"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                    >
+                      <IoTrashOutline className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {/* Floating Bottom Action Bar depending on Tab View */}
               <div className="sticky bottom-4 z-20 flex items-center justify-center gap-3 pt-4">
                 {activeTab === "all" && (
@@ -1104,14 +1235,14 @@ export default function MatchesPage() {
                       <span>Move to Reject</span>
                     </button>
 
-                    {/* Create Document */}
+                    {/* Apply for the job */}
                     <button
                       type="button"
-                      onClick={() => setIsCreateDocModalOpen(true)}
+                      onClick={() => handleOpenApply(selectedJob.id)}
                       className="inline-flex items-center gap-2 px-7 py-2.5 rounded-full bg-[#2A334B] hover:bg-[#1f2638] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer hover:scale-105"
                     >
                       <FiCheck className="w-4 h-4" />
-                      <span>Create Document</span>
+                      <span>Apply for the job</span>
                     </button>
                   </div>
                 )}
@@ -1188,6 +1319,21 @@ export default function MatchesPage() {
         onClose={() => setIsCreateDocModalOpen(false)}
         jobTitle={selectedJob?.title}
       />
+
+      {/* Apply Successful Modal */}
+      <ApplySuccessfulModal
+        isOpen={isApplySuccessModalOpen}
+        onClose={() => setIsApplySuccessModalOpen(false)}
+        onGoToJobMatching={handleConfirmApplySuccess}
+      />
     </div>
+  );
+}
+
+export default function MatchesPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-400">Loading matches...</div>}>
+      <MatchesContent />
+    </Suspense>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { FiArrowUpRight } from "react-icons/fi";
 
@@ -38,6 +39,7 @@ export default function CreateDocumentModal({
   onClose,
   jobTitle = "Software Engineer",
 }) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(15);
   const [currentStep, setCurrentStep] = useState(0);
@@ -74,6 +76,7 @@ export default function CreateDocumentModal({
     } else {
       toast.success(`Documents ready for ${jobTitle}!`);
       onClose();
+      router.push("/dashboard/cv-document");
     }
   };
 
